@@ -106,6 +106,11 @@
     self.loadingSpinner.hidden = NO;
     [self.refreshControl beginRefreshing];
 //    [self refreshControlTriggered:self.refreshControl];
+    self.loadingSpinner.frame = CGRectMake(
+                                           (self.refreshControl.frame.size.width - self.loadingSpinner.frame.size.width) / 2,
+                                           (self.refreshControl.frame.size.height - self.loadingSpinner.frame.size.height) / 2,
+                                           self.loadingSpinner.frame.size.width,
+                                           self.loadingSpinner.frame.size.height);
     [self.loadingSpinner startAnimating];
 
     if (adjustScrollOffset) {
