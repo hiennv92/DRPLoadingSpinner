@@ -68,11 +68,15 @@
 }
 
 - (void)addToScrollView:(UIScrollView *)scrollView {
-    NSAssert([scrollView respondsToSelector:@selector(refreshControl)], @"refreshControl is only available on UIScrollView on iOS 10 and up.");
-    
+//    NSAssert([scrollView respondsToSelector:@selector(refreshControl)], @"refreshControl is only available on UIScrollView on iOS 10 and up.");
+
     [self removeFromPartnerObject];
     self.scrollView = scrollView;
-    self.scrollView.refreshControl = self.refreshControl;
+    if ([scrollView respondsToSelector:@selector(refreshControl)]) {
+        self.scrollView.refreshControl = self.refreshControl;
+    } else {
+        [self.scrollView addSubview:self.refreshControl];
+    }
     [self.refreshControl.subviews.firstObject removeFromSuperview];
 
     self.originalDelegate = self.scrollView.delegate;
@@ -81,7 +85,11 @@
 
 - (void)removeFromPartnerObject {
     if (self.tableViewController) {
-        self.tableViewController.refreshControl = nil;
+        if ([self.tableViewController respondsToSelector:@selector(refreshControl)]) {
+            self.tableViewController.refreshControl = nil;
+        } else {
+            [self.refreshControl removeFromSuperview];
+        }
         self.tableViewController = nil;
     }
 
@@ -97,7 +105,8 @@
 
     self.loadingSpinner.hidden = NO;
     [self.refreshControl beginRefreshing];
-    [self refreshControlTriggered:self.refreshControl];
+//    [self refreshControlTriggered:self.refreshControl];
+    [self.loadingSpinner startAnimating];
 
     if (adjustScrollOffset) {
         [self.scrollView setContentOffset:CGPointMake(0, -self.scrollView.contentInset.top) animated:YES];
